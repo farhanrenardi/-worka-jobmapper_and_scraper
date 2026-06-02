@@ -1,0 +1,66 @@
+{
+  "total_jobs": 2007,
+  "by_classification": {
+    "Other": 1158,
+    "Consultant": 322,
+    "Management Trainee": 319,
+    "Data Analyst": 126,
+    "Data Scientist": 82
+  },
+  "by_company_type": {
+    "Non IT Company": 1508,
+    "IT Company": 499
+  },
+  "by_source": {
+    "glints": 1600,
+    "jobstreet": 220,
+    "kalibrr": 177,
+    "talentics": 10
+  },
+  "top_hiring_companies": [
+    {
+      "company": "PT Sigma Global TeknologiJakarta Selatan,DKI Jakarta",
+      "count": 45
+    },
+    {
+      "company": "TPM GROUP (PT TRIMITRA PUTRA MANDIRI)Medan,Sumatera Utara",
+      "count": 27
+    },
+    {
+      "company": "Legal Indonesia ConsultingKab. Badung,Bali",
+      "count": 24
+    },
+    {
+      "company": "PT DIGITAL SEJAHTERA NUSANTARAJakarta Selatan,DKI Jakarta",
+      "count": 20
+    },
+    {
+      "company": "Vanaya IndonesiaJakarta Selatan,DKI Jakarta",
+      "count": 20
+    },
+    {
+      "company": "Multimatics IDJakarta Selatan,DKI Jakarta",
+      "count": 19
+    },
+    {
+      "company": "Omedica ClinicJakarta Utara,DKI Jakarta",
+      "count": 18
+    },
+    {
+      "company": "PT Pusat Gadai IndonesiaJakarta Barat,DKI Jakarta",
+      "count": 17
+    },
+    {
+      "company": "Bantu PengusahaKab. Sidoarjo,Jawa Timur",
+      "count": 15
+    },
+    {
+      "company": "EVOLUTION TEAM (Bekasi)Jakarta Selatan,DKI Jakarta",
+      "count": 15
+    }
+  ],
+  "top_prospects": [],
+  "scrape_date": "2026-04-20",
+  "sources_count": 4,
+  "classifications_count": 5
+}
