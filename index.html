@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worka — Documentation</title>
+    <meta name="description" content="Comprehensive documentation for Worka, an automated multi-source job scraping and AI classification tool for the Indonesian job market.">
+    <meta name="author" content="Worka">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;450;500;550;600;650;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/docs.css">
+
+    <!-- Favicon (inline SVG data URI) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B8973A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='3' width='18' height='18' rx='2'/><path d='M3 9h18'/><path d='M9 21V9'/></svg>">
+</head>
+<body>
+    <div id="docs-app">
+        <!-- Mobile menu button -->
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle navigation">☰</button>
+        <div class="mobile-overlay" id="mobile-overlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="docs-sidebar">
+            <div class="sidebar-header">
+                <a class="sidebar-brand" data-page="overview">
+                    <div>
+                        <div class="brand-logo"><span class="wr">Wor</span><span class="ka">ka</span></div>
+                        <div class="brand-subtitle">Documentation</div>
+                    </div>
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Getting Started</div>
+                    <a class="nav-link active" data-page="overview">
+                        <i data-lucide="clipboard-list" class="nav-icon"></i>
+                        <span>Overview</span>
+                    </a>
+                    <a class="nav-link" data-page="architecture">
+                        <i data-lucide="blocks" class="nav-icon"></i>
+                        <span>Architecture</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Deep Dive</div>
+                    <a class="nav-link" data-page="scraping">
+                        <i data-lucide="search" class="nav-icon"></i>
+                        <span>Scraping Engine</span>
+                    </a>
+                    <a class="nav-link" data-page="ai-pipeline">
+                        <i data-lucide="bot" class="nav-icon"></i>
+                        <span>AI Pipeline</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Analysis</div>
+                    <a class="nav-link" data-page="comparison">
+                        <i data-lucide="zap" class="nav-icon"></i>
+                        <span>Manual vs Worka</span>
+                    </a>
+                    <a class="nav-link" data-page="demo">
+                        <i data-lucide="bar-chart-2" class="nav-icon"></i>
+                        <span>Interactive Demo</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Reference</div>
+                    <a class="nav-link" data-page="tech-stack">
+                        <i data-lucide="settings" class="nav-icon"></i>
+                        <span>Technology Stack</span>
+                    </a>
+                </div>
+            </nav>
+
+        </aside>
+
+        <!-- Main Content -->
+        <main class="docs-content">
+            <div class="docs-content-inner" id="docs-content-inner">
+                <!-- Content rendered by SPA router -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Page scripts (order matters: charts/components first, then pages, then router) -->
+    <script src="js/components/charts.js"></script>
+    <script src="js/pages/overview.js"></script>
+    <script src="js/pages/architecture.js"></script>
+    <script src="js/pages/scraping.js"></script>
+    <script src="js/pages/ai-pipeline.js"></script>
+    <script src="js/pages/comparison.js"></script>
+    <script src="js/pages/demo.js"></script>
+    <script src="js/pages/tech-stack.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
