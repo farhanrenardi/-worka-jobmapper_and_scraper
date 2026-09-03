@@ -1,4 +1,4 @@
-# Worka 2.0 — Automated Labor Market Data Pipeline & Self-Healing Ingestion Platform
+# Worka - Job Intelligence Platform
 
 > An enterprise-grade, end-to-end ELT (Extract-Load-Transform) data engineering pipeline and self-healing ingestion platform designed to collect, model, enrich, and serve technical labor market intelligence across Southeast Asia.
 
