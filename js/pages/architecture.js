@@ -1,197 +1,184 @@
 /**
- * Architecture Page — System design, module breakdown, data flow.
+ * Architecture Page — Worka 2.0 System Design, Kimball Star Schema ERD, and API v2 Reference.
+ * Strictly zero emojis. Theme-consistent with dark-gold styling.
  */
 function renderArchitecturePage() {
     return `
         <div class="animate-in">
             <h1>System Architecture</h1>
             <p class="page-lead">
-                Worka is designed as a modular pipeline — each stage processes data independently 
-                and passes it downstream. The system is optimized for local execution with 
-                browser-based scraping that requires a real Chrome instance.
+                Worka 2.0 is engineered as a modern ELT (Extract-Load-Transform) data pipeline. 
+                Raw payloads are immutably preserved in a partitioned landing zone before dbt-core 
+                transforms them into Kimball star schema marts, followed by Gemini vector enrichment 
+                and FastAPI serving.
             </p>
 
-            <h2>High-Level Architecture</h2>
-            <div class="arch-diagram">
-                <div class="arch-row">
-                    <div class="arch-box">
-                        <div class="arch-box-icon"><i data-lucide="globe" class="arch-box-icon"></i></div>
-                        <div class="arch-box-label">LinkedIn</div>
-                        <div class="arch-box-sub">Visible CDP</div>
-                    </div>
-                    <div class="arch-box">
-                        <div class="arch-box-icon"><i data-lucide="globe" class="arch-box-icon"></i></div>
-                        <div class="arch-box-label">Glints</div>
-                        <div class="arch-box-sub">GraphQL API</div>
-                    </div>
-                    <div class="arch-box">
-                        <div class="arch-box-icon"><i data-lucide="globe" class="arch-box-icon"></i></div>
-                        <div class="arch-box-label">JobStreet</div>
-                        <div class="arch-box-sub">HTTP + Browser</div>
-                    </div>
-                    <div class="arch-box">
-                        <div class="arch-box-icon"><i data-lucide="globe" class="arch-box-icon"></i></div>
-                        <div class="arch-box-label">Kalibrr</div>
-                        <div class="arch-box-sub">REST API</div>
-                    </div>
-                    <div class="arch-box">
-                        <div class="arch-box-icon"><i data-lucide="globe" class="arch-box-icon"></i></div>
-                        <div class="arch-box-label">Talentics</div>
-                        <div class="arch-box-sub">REST API</div>
-                    </div>
-                    <div class="arch-box">
-                        <div class="arch-box-icon"><i data-lucide="globe" class="arch-box-icon"></i></div>
-                        <div class="arch-box-label">Indeed</div>
-                        <div class="arch-box-sub">Browser Only</div>
-                    </div>
-                </div>
+            <h2>End-to-End System Pipeline</h2>
+            <p>
+                The following diagram illustrates data progression from multi-source web crawlers 
+                through the immutable raw lake, dbt dimensional modeling, AI vector generation, and API serving:
+            </p>
 
-                <div class="arch-arrow-row">▼ ▼ ▼ ▼ ▼ ▼</div>
+            ${renderPipelineFlowSvg()}
 
-                <div class="arch-row">
-                    <div class="arch-box gold-border" style="min-width:200px">
-                        <div class="arch-box-icon"><i data-lucide="monitor" class="arch-box-icon"></i></div>
-                        <div class="arch-box-label">Playwright Engine</div>
-                        <div class="arch-box-sub">Stealth + Persistent Context</div>
-                    </div>
-                    <div class="arch-box gold-border" style="min-width:200px">
-                        <div class="arch-box-icon"><i data-lucide="user" class="arch-box-icon"></i></div>
-                        <div class="arch-box-label">Login/CAPTCHA Handler</div>
-                        <div class="arch-box-sub">Human-in-the-Loop</div>
-                    </div>
-                </div>
+            <h2>Kimball Star Schema &amp; ERD</h2>
+            <p>
+                Worka 2.0 applies Kimball dimensional modeling principles. Ingestion batches are 
+                deduplicated in staging views, and downstream marts generate deterministic MD5 surrogate keys 
+                (<code>dbt_utils.generate_surrogate_key</code>) to connect the central fact table to conformed dimensions:
+            </p>
 
-                <div class="arch-arrow-row">▼</div>
+            ${renderStarSchemaErdSvg()}
 
-                <div class="arch-row">
-                    <div class="arch-box gold-border" style="min-width:280px">
-                        <div class="arch-box-icon"><i data-lucide="bot" class="arch-box-icon"></i></div>
-                        <div class="arch-box-label">AI Pipeline</div>
-                        <div class="arch-box-sub">OpenAI gpt-4o-mini + Tavily Search</div>
-                    </div>
-                </div>
-
-                <div class="arch-arrow-row">▼</div>
-
-                <div class="arch-row">
-                    <div class="arch-box" style="min-width:180px">
-                        <div class="arch-box-icon"><i data-lucide="database" class="flow-node-icon"></i></div>
-                        <div class="arch-box-label">Database</div>
-                        <div class="arch-box-sub">PostgreSQL / SQLite</div>
-                    </div>
-                    <div class="arch-box" style="min-width:180px">
-                        <div class="arch-box-icon"><i data-lucide="server" class="arch-box-icon"></i></div>
-                        <div class="arch-box-label">FastAPI Server</div>
-                        <div class="arch-box-sub">REST API + SSE</div>
-                    </div>
-                    <div class="arch-box" style="min-width:180px">
-                        <div class="arch-box-icon"><i data-lucide="bar-chart-2" class="arch-box-icon"></i></div>
-                        <div class="arch-box-label">SPA Dashboard</div>
-                        <div class="arch-box-sub">Vanilla JS/CSS</div>
-                    </div>
-                </div>
+            <h3>Table Definitions &amp; Grain</h3>
+            <div class="doc-table-wrapper">
+                <table class="doc-table">
+                    <thead>
+                        <tr>
+                            <th>Table Name</th>
+                            <th>Type</th>
+                            <th>Grain</th>
+                            <th>Primary / Foreign Keys</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>fact_job_postings</code></td>
+                            <td>Fact Mart</td>
+                            <td>1 row per active job posting</td>
+                            <td>PK: <code>job_pk</code><br>FK: <code>company_id</code><br>FK: <code>location_id</code></td>
+                            <td>Central fact table storing core job attributes, source portal, composite SHA256 content hash, raw skills, and active status flag.</td>
+                        </tr>
+                        <tr>
+                            <td><code>dim_companies</code></td>
+                            <td>Dimension</td>
+                            <td>1 row per unique employer entity</td>
+                            <td>PK: <code>company_id</code></td>
+                            <td>Conformed dimension for hiring companies, supporting employer concentration analytics and industry classification.</td>
+                        </tr>
+                        <tr>
+                            <td><code>dim_skills</code></td>
+                            <td>Dimension</td>
+                            <td>1 row per standardized technical skill</td>
+                            <td>PK: <code>skill_id</code></td>
+                            <td>Tokenized and unnested skill taxonomy dimension (SQL, Python, dbt, Apache Spark, etc.) used for granular demand benchmarking.</td>
+                        </tr>
+                        <tr>
+                            <td><code>dim_locations</code></td>
+                            <td>Dimension</td>
+                            <td>1 row per geographic location</td>
+                            <td>PK: <code>location_id</code></td>
+                            <td>Normalized geographic entity with automated work model classification (Remote, Hybrid, On-site).</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
-            <h2>Core Modules</h2>
+            <h2>Core Pipeline Stages</h2>
 
-            <h3>Module 1 — Crawling & Scraping Engine</h3>
+            <h3>Stage 1 — Multi-Source Ingestion &amp; Self-Healing</h3>
             <p>
-                The scraping engine uses a <strong>two-phase strategy</strong> for maximum reliability:
-            </p>
-            <ol>
-                <li><strong>Phase 1 (Headless):</strong> Fast, stealthed headless browser — or direct API/HTTP requests where possible. Resource-blocking (images, fonts, media) is enabled for speed.</li>
-                <li><strong>Phase 2 (Visible CDP):</strong> If Phase 1 fails (anti-bot, CAPTCHA, login wall), a visible Chrome window opens for manual user intervention.</li>
-            </ol>
-            <p>
-                All scrapers share a <strong>persistent browser context</strong> (<code>launch_persistent_context</code>) 
-                so login cookies are preserved across sources and sessions.
+                The ingestion layer collects postings across Glints, JobStreet, LinkedIn, Kalibrr, and Talentics. 
+                To withstand volatile web markup, the <code>SelfHealingScraperAdapter</code> attempts high-speed 
+                deterministic CSS extraction. If front-end DOM drift is detected (0 records extracted), it triggers 
+                an AI fallback cascade to Google Gemini Flash (3.7 &gt; 3.6 &gt; 3.5) to parse unstructured job cards. 
+                All browser sessions utilize persistent Chrome contexts and 7+ stealth patches to prevent bot detection.
             </p>
 
-            <h3>Module 2 — Data Parsing & AI Classification</h3>
+            <h3>Stage 2 — Immutable Raw Landing Lake</h3>
             <p>
-                Raw scraped data is streamed into the AI pipeline for classification:
-            </p>
-            <ul>
-                <li><strong>Job Role Classification</strong> — Maps each job to one of 5 categories: Data Analyst, Data Scientist, Management Trainee, Consultant, or Other</li>
-                <li><strong>Company Type Classification</strong> — Determines if the company's primary business is IT (tech/software) or Non-IT, with web search enrichment via Tavily</li>
-            </ul>
-
-            <h3>Module 3 — Storage & Deduplication</h3>
-            <p>
-                Processed results are stored in a <strong>PostgreSQL</strong> database (with SQLite fallback for development). 
-                Before inserting, each job's link is checked against existing records to prevent duplicates across 
-                multiple scraping sessions.
+                Before any data transformation takes place, raw scraped batches land immutably in 
+                <code>./data/raw/{source}/{YYYY-MM-DD}/{batch_id}.json</code>. 
+                Each job record is assigned a composite SHA256 hash (<code>url|title|company</code>). 
+                This design prevents data loss on downstream parser failure and ensures complete idempotency 
+                across repeated scraping runs.
             </p>
 
-            <h3>Module 4 — AI Prospecting & Assessment</h3>
+            <h3>Stage 3 — dbt Core Dimensional Modeling</h3>
             <p>
-                An optional assessment module evaluates each job opportunity by:
+                The transformation layer is executed by <code>dbt-core</code>:
             </p>
             <ul>
-                <li>Searching the web for salary reviews and company culture information (via Tavily)</li>
-                <li>Using GPT-4o-mini to estimate salary range, workload score (1–10), and prospect level (Low/Medium/High)</li>
-                <li>Results stream to the UI in real-time via NDJSON</li>
+                <li><strong>Staging (<code>stg_job_postings</code>):</strong> Deduplicates incoming raw batches via window functions over <code>scraped_at</code>.</li>
+                <li><strong>Marts:</strong> Populates the Kimball star schema (<code>fact_job_postings</code>, <code>dim_companies</code>, <code>dim_skills</code>, <code>dim_locations</code>) with deterministic MD5 surrogate keys.</li>
             </ul>
 
-            <h3>Module 5 — Dashboard & Visualization</h3>
+            <h3>Stage 4 — AI Vector Enrichment</h3>
             <p>
-                The frontend is a <strong>Single Page Application</strong> (vanilla JS) served directly by FastAPI. 
-                It features summary metrics, classification charts, top hiring company rankings, 
-                prospect leaderboards, and a fully filterable/searchable data table.
+                Cleaned job descriptions are passed to <strong>Gemini Embedding 1</strong> to generate 768-dimensional dense vectors. 
+                These embeddings capture latent semantics, contextual relationships, and domain concepts that keyword matching misses.
             </p>
 
-            <h2>Project Structure</h2>
-            <pre><code>worka/
-├── backend/
-│   ├── main.py              # FastAPI server (API + frontend serving)
-│   ├── config.py             # Configuration loader (.env)
-│   ├── database.py           # SQLAlchemy models
-│   ├── scrapers/
-│   │   ├── base.py           # Abstract base scraper
-│   │   ├── linkedin.py       # LinkedIn (always visible CDP)
-│   │   ├── glints.py         # Glints (GraphQL API → browser fallback)
-│   │   ├── jobstreet.py      # JobStreet (HTTP → browser fallback)
-│   │   ├── kalibrr.py        # Kalibrr (REST API → browser fallback)
-│   │   ├── talentics.py      # Talentics (REST API → browser fallback)
-│   │   ├── indeed.py         # Indeed (browser only)
-│   │   └── manager.py        # Orchestrator — contexts + login popup
-│   ├── ai/
-│   │   ├── classifier.py     # LLM classification (role + company)
-│   │   └── prospector.py     # AI salary/workload assessment
-│   └── requirements.txt
-├── frontend/
-│   ├── index.html            # SPA entry point
-│   ├── css/styles.css        # Design system
-│   └── js/
-│       ├── app.js            # SPA router
-│       ├── api.js            # API client
-│       ├── pages/            # Home, Results, Dashboard
-│       └── components/       # Card, Table, Charts
-├── .env                      # Environment variables
-└── README.md</code></pre>
+            <h3>Stage 5 — FastAPI Serving &amp; Hybrid CV Matching</h3>
+            <p>
+                The serving layer exposes high-performance RESTful endpoints for analytics and candidate matching. 
+                The hybrid matcher scores candidate CVs against indexed jobs by combining vector cosine similarity (60%) 
+                with skill taxonomy Jaccard overlap (40%).
+            </p>
 
-            <h2>API Endpoints</h2>
+            <h2>REST API v2 Endpoint Reference</h2>
             <div class="doc-table-wrapper">
                 <table class="doc-table">
                     <thead>
                         <tr>
                             <th>Method</th>
                             <th>Endpoint</th>
+                            <th>Parameters</th>
                             <th>Description</th>
+                            <th>Response Sample</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td><code>GET</code></td><td><code>/api/config/status</code></td><td>Check API key configuration status</td></tr>
-                        <tr><td><code>POST</code></td><td><code>/api/scrape</code></td><td>Start a new scraping session</td></tr>
-                        <tr><td><code>GET</code></td><td><code>/api/scrape/progress</code></td><td>Real-time progress + login popup signal</td></tr>
-                        <tr><td><code>POST</code></td><td><code>/api/scrape/cancel</code></td><td>Cancel running scraping session</td></tr>
-                        <tr><td><code>POST</code></td><td><code>/api/scrape/login-continue</code></td><td>Signal login continue/skip</td></tr>
-                        <tr><td><code>GET</code></td><td><code>/api/jobs</code></td><td>List jobs with filters & pagination</td></tr>
-                        <tr><td><code>GET</code></td><td><code>/api/jobs/{id}</code></td><td>Single job detail</td></tr>
-                        <tr><td><code>DELETE</code></td><td><code>/api/jobs</code></td><td>Clear all jobs</td></tr>
-                        <tr><td><code>GET</code></td><td><code>/api/dashboard</code></td><td>Aggregated analytics data</td></tr>
-                        <tr><td><code>POST</code></td><td><code>/api/assess</code></td><td>Run AI assessment (NDJSON stream)</td></tr>
-                        <tr><td><code>GET</code></td><td><code>/api/export/csv</code></td><td>Export all data as CSV</td></tr>
+                        <tr>
+                            <td><code>GET</code></td>
+                            <td><code>/api/v2/jobs</code></td>
+                            <td><code>skill</code>, <code>location</code>, <code>limit</code>, <code>offset</code></td>
+                            <td>Retrieve paginated, filtered job postings from the dimensional star schema.</td>
+                            <td><code>{"status": "success", "count": 10, "total": 2007, "data": [...]}</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>GET</code></td>
+                            <td><code>/api/v2/analytics/skills</code></td>
+                            <td>None</td>
+                            <td>Retrieve top technical skills ranked by aggregate market demand and salary benchmarks.</td>
+                            <td><code>{"status": "success", "top_skills": [{"skill_name": "SQL", "demand_count": 142}, ...]}</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>POST</code></td>
+                            <td><code>/api/v2/match-cv</code></td>
+                            <td>File upload (PDF or DOCX)</td>
+                            <td>Parse candidate resume, extract skills, compute 768-dim embedding, and rank matching jobs.</td>
+                            <td><code>{"status": "success", "candidate": {...}, "matches": [{"match_score": 88, ...}]}</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>POST</code></td>
+                            <td><code>/api/v2/pipeline/trigger</code></td>
+                            <td><code>{"keywords": [...], "max_pages": 1}</code></td>
+                            <td>Trigger unified 5-stage master pipeline execution and return structured telemetry.</td>
+                            <td><code>{"status": "success", "telemetry": {"jobs_ingested": 45, "status": "SUCCESS"}}</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>GET</code></td>
+                            <td><code>/api/jobs</code></td>
+                            <td><code>page</code>, <code>page_size</code>, <code>search</code></td>
+                            <td>(v1 Legacy) Filtered job listings compatible with older client integrations.</td>
+                            <td><code>{"total": 2007, "data": [...]}</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>GET</code></td>
+                            <td><code>/api/dashboard</code></td>
+                            <td>None</td>
+                            <td>(v1 Legacy) Aggregated job role, company type, and employer breakdown.</td>
+                            <td><code>{"total_jobs": 2007, "by_classification": {...}}</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>GET</code></td>
+                            <td><code>/api/export/csv</code></td>
+                            <td>None</td>
+                            <td>(v1 Legacy) Stream all indexed job listings as downloadable CSV spreadsheet.</td>
+                            <td>CSV file stream</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

@@ -1,178 +1,138 @@
 /**
- * Technology Stack Page — Full technical details and setup guide.
+ * Technology Stack Page — Worka 2.0 Technical Architecture, Dependencies, and Setup Guide.
+ * Strictly zero emojis. Theme-consistent with dark-gold styling.
  */
 function renderTechStackPage() {
     return `
         <div class="animate-in">
-            <h1>Technology Stack</h1>
+            <h1>Technology Stack &amp; Infrastructure</h1>
             <p class="page-lead">
-                Worka is built with a focus on <strong>local-first execution</strong> — the scraping engine 
-                requires a real Chrome browser instance, making it best suited for running on a local machine 
-                rather than cloud hosting.
+                Worka 2.0 combines an enterprise-grade ELT data pipeline with modern AI services 
+                and high-throughput REST serving—built for complete execution on zero-cost infrastructure.
             </p>
 
-            <h2>Stack Overview</h2>
+            <h2>Technology Stack Breakdown</h2>
             <div class="doc-table-wrapper">
                 <table class="doc-table">
                     <thead>
                         <tr>
-                            <th>Layer</th>
-                            <th>Technology</th>
-                            <th>Purpose</th>
+                            <th>Architectural Layer</th>
+                            <th>Technology Component</th>
+                            <th>Purpose &amp; Implementation Details</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>Web Server</strong></td>
-                            <td>Python / FastAPI</td>
-                            <td>REST API endpoints + static file serving + SSE/NDJSON streams</td>
+                            <td><strong>API &amp; Serving Engine</strong></td>
+                            <td>Python 3.9+ / FastAPI</td>
+                            <td>High-performance asynchronous REST API v2 serving dimensional job queries, skill aggregations, and CV uploads.</td>
                         </tr>
                         <tr>
-                            <td><strong>Scraping</strong></td>
-                            <td>Playwright (Python)</td>
-                            <td>Headless + visible browser automation with persistent contexts</td>
+                            <td><strong>Transformation &amp; Modeling</strong></td>
+                            <td>dbt Core (1.7+)</td>
+                            <td>Kimball star schema transformations, deduplication staging views, and surrogate key generation.</td>
                         </tr>
                         <tr>
-                            <td><strong>HTTP Client</strong></td>
-                            <td>httpx (async)</td>
-                            <td>Direct API/HTTP requests (API-first scrapers, Tavily calls)</td>
+                            <td><strong>LLM Intelligence</strong></td>
+                            <td>Google Gemini Flash (3.7 / 3.6 / 3.5)</td>
+                            <td>Hierarchical model cascade for role categorization, company type inference, and self-healing DOM extraction.</td>
                         </tr>
                         <tr>
-                            <td><strong>HTML Parsing</strong></td>
-                            <td>BeautifulSoup 4</td>
-                            <td>Parse scraped HTML → extract job data from DOM</td>
+                            <td><strong>Semantic Vector Engine</strong></td>
+                            <td>Google Gemini Embedding 1</td>
+                            <td>768-dimensional dense vector embeddings (<code>text-embedding-004</code>) powering hybrid candidate-job ranking.</td>
                         </tr>
                         <tr>
-                            <td><strong>LLM / AI</strong></td>
-                            <td>OpenAI API (<code>gpt-4o-mini</code>)</td>
-                            <td>Job role classification, company type classification, prospect assessment</td>
+                            <td><strong>Database &amp; Vector Store</strong></td>
+                            <td>PostgreSQL 16 + pgvector</td>
+                            <td>Relational storage for dimensional marts and indexed embedding vectors running in containerized Docker.</td>
                         </tr>
                         <tr>
-                            <td><strong>Web Search</strong></td>
-                            <td>Tavily Search API</td>
-                            <td>Enrich company context for more accurate LLM classification</td>
+                            <td><strong>Web Ingestion &amp; Automation</strong></td>
+                            <td>Playwright (Python) + BeautifulSoup 4</td>
+                            <td>Browser automation with persistent user context, visible CDP escalation, and 7+ anti-bot evasion patches.</td>
                         </tr>
                         <tr>
-                            <td><strong>Database</strong></td>
-                            <td>PostgreSQL / SQLite</td>
-                            <td>PostgreSQL for production; SQLite fallback for development</td>
+                            <td><strong>Raw Landing Lake</strong></td>
+                            <td>Immutable Local JSON Storage</td>
+                            <td>Source- and date-partitioned landing zone with composite SHA256 content hashing for idempotency.</td>
                         </tr>
                         <tr>
-                            <td><strong>ORM</strong></td>
-                            <td>SQLAlchemy</td>
-                            <td>Database models, session management, queries</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Frontend</strong></td>
-                            <td>Vanilla JS + CSS</td>
-                            <td>Single Page Application — no framework, no build step</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Typography</strong></td>
-                            <td>Inter + JetBrains Mono</td>
-                            <td>Body text + code/monospace elements</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Containerization</strong></td>
-                            <td>Docker Compose</td>
-                            <td>PostgreSQL database container</td>
+                            <td><strong>Presentation Layer</strong></td>
+                            <td>Vanilla JS + CSS (SPA)</td>
+                            <td>Zero-build single-page application loaded natively from static files on GitHub Pages.</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <h2>Prerequisites</h2>
-            <ul>
-                <li><strong>Python 3.9+</strong> — required for type hints and asyncio features used</li>
-                <li><strong>Google Chrome</strong> — real Chrome browser required for Playwright persistent contexts</li>
-                <li><strong>Docker</strong> (optional) — for running PostgreSQL via Docker Compose</li>
-            </ul>
+            <h2>Setup &amp; Execution Guide</h2>
 
-            <h3>API Keys (Optional)</h3>
-            <div class="card-grid">
-                <div class="doc-card">
-                    <h3><i data-lucide="key" class="inline-icon"></i> OpenAI API Key</h3>
-                    <p>Required for AI-powered job classification. Without it, the system falls back to rule-based keyword matching.</p>
-                </div>
-                <div class="doc-card">
-                    <h3><i data-lucide="search" class="inline-icon"></i> Tavily API Key</h3>
-                    <p>Required for web search enrichment during company type classification. Without it, classification relies on the company name alone.</p>
-                </div>
-            </div>
+            <h3>Step 1 — Environment Initialization</h3>
+            <pre><code># Clone the master repository
+git clone https://github.com/farhanrenardi/worka-jobmapper_and_scraper.git
+cd worka-jobmapper_and_scraper
 
-            <h2>Setup & Installation</h2>
-
-            <h3>Step 1 — Clone & Setup Virtual Environment</h3>
-            <pre><code>cd /path/to/worka
+# Initialize and activate Python virtual environment
 python3 -m venv venv
 source venv/bin/activate
+
+# Install backend dependencies
 pip install -r backend/requirements.txt
 playwright install</code></pre>
 
-            <h3>Step 2 — Configure Environment Variables</h3>
-            <pre><code>cp .env.example .env
-# Edit .env and add your API keys:
-# OPENAI_API_KEY=sk-...
-# TAVILY_API_KEY=tvly-...
-# DATABASE_URL=sqlite:///./job_mapper.db</code></pre>
+            <h3>Step 2 — Environment Configuration</h3>
+            <p>Create or update the <code>.env</code> file in the project root:</p>
+            <pre><code>GEMINI_API_KEY=your_gemini_api_key_here
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/jobmapper
+RAW_DATA_DIR=./data/raw
+DBT_PROJECT_DIR=./dbt_worka
+HOST=0.0.0.0
+PORT=8000</code></pre>
 
-            <h3>Step 3 — Start the Application</h3>
-            <pre><code>source venv/bin/activate
-cd backend
-python main.py
+            <h3>Step 3 — Launch via 1-Command Runner</h3>
+            <p>Spin up the PostgreSQL 16 pgvector container and FastAPI server with a single command:</p>
+            <pre><code>chmod +x start stop
+./start</code></pre>
 
-# Open http://127.0.0.1:8000</code></pre>
+            <h3>Step 4 — Trigger Master ELT Pipeline via CLI</h3>
+            <p>Run the 5-stage ELT pipeline directly from the command line:</p>
+            <pre><code>python backend/pipeline_runner.py --keywords "data engineer" "data scientist" --pages 1</code></pre>
 
-            <h3>Step 4 — Stop</h3>
-            <pre><code>./stop   # from the project root</code></pre>
+            <h3>Step 5 — Graceful Shutdown</h3>
+            <pre><code>./stop</code></pre>
 
-            <h2>Environment Variables</h2>
+            <h2>Environment Variables Reference</h2>
             <div class="doc-table-wrapper">
                 <table class="doc-table">
                     <thead>
                         <tr>
-                            <th>Variable</th>
-                            <th>Default</th>
+                            <th>Variable Name</th>
+                            <th>Default Value</th>
                             <th>Description</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td><code>OPENAI_API_KEY</code></td><td><em>empty</em></td><td>OpenAI API key for LLM classification</td></tr>
-                        <tr><td><code>TAVILY_API_KEY</code></td><td><em>empty</em></td><td>Tavily Search API key for web enrichment</td></tr>
-                        <tr><td><code>DATABASE_URL</code></td><td><code>postgresql://...</code></td><td>Database connection string</td></tr>
-                        <tr><td><code>CHROME_PATH</code></td><td>macOS Chrome path</td><td>Path to Chrome executable</td></tr>
-                        <tr><td><code>LLM_MODEL</code></td><td><code>gpt-4o-mini</code></td><td>OpenAI model name</td></tr>
-                        <tr><td><code>LLM_TEMPERATURE</code></td><td><code>0.1</code></td><td>Model temperature (low = deterministic)</td></tr>
-                        <tr><td><code>MAX_PAGES_PER_SOURCE</code></td><td><code>5</code></td><td>Max pagination depth per keyword per source</td></tr>
-                        <tr><td><code>REQUEST_DELAY_MIN</code></td><td><code>1.5</code></td><td>Minimum delay between page loads (seconds)</td></tr>
-                        <tr><td><code>REQUEST_DELAY_MAX</code></td><td><code>4.0</code></td><td>Maximum delay between page loads (seconds)</td></tr>
-                        <tr><td><code>HOST</code></td><td><code>0.0.0.0</code></td><td>Server host</td></tr>
-                        <tr><td><code>PORT</code></td><td><code>8000</code></td><td>Server port</td></tr>
+                        <tr><td><code>GEMINI_API_KEY</code></td><td><em>empty</em></td><td>Google AI Studio API key for Gemini Flash and Embedding models.</td></tr>
+                        <tr><td><code>DATABASE_URL</code></td><td><code>postgresql://...</code></td><td>Connection string for PostgreSQL 16 database.</td></tr>
+                        <tr><td><code>RAW_DATA_DIR</code></td><td><code>./data/raw</code></td><td>Root directory path for immutable raw JSON batch lake.</td></tr>
+                        <tr><td><code>DBT_PROJECT_DIR</code></td><td><code>./dbt_worka</code></td><td>Path to dbt-core dimensional modeling project.</td></tr>
+                        <tr><td><code>HOST</code></td><td><code>0.0.0.0</code></td><td>FastAPI server network bind host.</td></tr>
+                        <tr><td><code>PORT</code></td><td><code>8000</code></td><td>FastAPI server network port.</td></tr>
                     </tbody>
                 </table>
             </div>
 
-            <h2>Python Dependencies</h2>
-            <pre><code>fastapi
-uvicorn[standard]
-sqlalchemy
-python-dotenv
-playwright
-beautifulsoup4
-httpx
-openai</code></pre>
-
-            <h2>Why Local-First?</h2>
+            <h2>Architecture Principles</h2>
             <div class="callout callout-gold">
-                <div class="callout-title"><i data-lucide="home" class="callout-icon"></i> Architecture Decision</div>
+                <div class="callout-title"><i data-lucide="shield" class="callout-icon"></i> Zero-Cost Operational Budget</div>
                 <p>
-                    Worka is designed as a <strong>local-first application</strong> for several reasons:
+                    Worka 2.0 is designed from the ground up to operate with <strong>$0.00 infrastructure spend</strong>:
                 </p>
                 <ul>
-                    <li><strong>Browser requirement</strong> — Playwright needs a real Chrome instance. Cloud hosting (Render, Railway) has limited RAM and no GUI for manual login/CAPTCHA solving.</li>
-                    <li><strong>IP reputation</strong> — Cloud provider IPs (AWS, GCP) are frequently blocked by job sites' anti-bot systems. Home IPs have much better reputation.</li>
-                    <li><strong>Login cookies</strong> — LinkedIn and other sites require authenticated sessions that persist across runs. This works naturally with local Chrome user data.</li>
-                    <li><strong>Privacy</strong> — Your job search data stays on your machine.</li>
+                    <li><strong>Google AI Studio Free Tier:</strong> 15 RPM / 1M TPM for Gemini Flash and 1,500 RPM for Gemini Embedding.</li>
+                    <li><strong>Local Docker Container:</strong> PostgreSQL 16 + pgvector runs entirely on local development hardware.</li>
+                    <li><strong>Static Hosting:</strong> This interactive documentation SPA is deployed cost-free on GitHub Pages via automated GitHub Actions.</li>
                 </ul>
             </div>
         </div>
